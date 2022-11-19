@@ -10,10 +10,11 @@ provider:
   region: eu-north-1
   environment:
     DB_URI: ${file(./config.json):DB_URI_DEV}
+    WEATHER_API_KEY: ${file(./config.json):WEATHER_API_KEY}
 
 functions:
   processWeatherRecord:
     handler: handler.processWeatherRecord
     events:
       # Invoke Lambda function every minute
-      - schedule: rate(1 minute)
+      - schedule: rate(30 minutes)
