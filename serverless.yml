@@ -12,8 +12,8 @@ provider:
     DB_URI: ${file(./config.json):DB_URI_DEV}
 
 functions:
-  rateHandler:
-    handler: handler.run
+  processWeatherRecord:
+    handler: handler.processWeatherRecord
     events:
       # Invoke Lambda function every minute
       - schedule: rate(1 minute)
