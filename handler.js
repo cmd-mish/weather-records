@@ -14,6 +14,7 @@ mongoose.connect(DB_URI)
     console.log(`error occured: ${error}`)
   })
 
+// Retrieves weather data from external API
 const retreiveWeatherData = async () => {
   const { data } = await axios(`https://api.openweathermap.org/data/2.5/weather?q=helsinki&units=metric&appid=${WEATHER_API_KEY}`)
   return {
@@ -32,17 +33,17 @@ module.exports.processWeatherRecord = async (event) => {
       timestamp: currentTimestamp,
     })
 
-    const response = await newRecord.save()
-    return {
-      statusCode: 200,
-      headers: {
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Credentials': true,
-        }
-      },
-      body: response
-    }
+    const savedRecord = await newRecord.save()
+    return savedRecord
+  } catch (exception) {
+    throw new Error(JSON.stringify(exception))
+  }
+}
+
+module.exports.getWeatherRecords = async () => {
+  try {
+    const records = await WeatherRecord.find({})
+    return records
   } catch (exception) {
     throw new Error(JSON.stringify(exception))
   }
