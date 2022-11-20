@@ -8,7 +8,7 @@ const WeatherRecord = require('./models/weatherRecord')
 
 mongoose.connect(DB_URI)
   .then(() => {
-    console.log(`connected to ${DB_URI}`)
+    console.log(`connected to database`)
   })
   .catch((error) => {
     console.log(`error occured: ${error}`)
@@ -24,13 +24,26 @@ const retreiveWeatherData = async () => {
 
 // Records a new weather value to the database
 module.exports.processWeatherRecord = async (event) => {
-  const currentTimestamp = new Date().toISOString().split('.')[0]
-  const weatherData = await retreiveWeatherData()
-  const newRecord = new WeatherRecord({
-    ...weatherData,
-    timestamp: currentTimestamp,
-  })
+  try {
+    const currentTimestamp = new Date().toISOString().split('.')[0]
+    const weatherData = await retreiveWeatherData()
+    const newRecord = new WeatherRecord({
+      ...weatherData,
+      timestamp: currentTimestamp,
+    })
 
-  const response = await newRecord.save()
-  return response
+    const response = await newRecord.save()
+    return {
+      statusCode: 200,
+      headers: {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': true,
+        }
+      },
+      body: response
+    }
+  } catch (exception) {
+    throw new Error(JSON.stringify(exception))
+  }
 }
