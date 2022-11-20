@@ -11,7 +11,7 @@ mongoose.connect(DB_URI)
     console.log(`connected to database`)
   })
   .catch((error) => {
-    console.log(`error occured: ${error}`)
+    throw Error(`error occured: ${error}`)
   })
 
 // Retrieves weather data from external API
@@ -42,8 +42,17 @@ module.exports.processWeatherRecord = async (event) => {
 
 module.exports.getWeatherRecords = async () => {
   try {
-    const records = await WeatherRecord.find({}).limit(100)
-    return records
+    const records = await WeatherRecord.find({})
+      .limit(100)
+      .sort({ timestamp: -1 })
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*' // replace with hostname of frontend (CloudFront)
+      },
+      body: JSON.stringify(records)
+    }
   } catch (exception) {
     throw new Error(JSON.stringify(exception))
   }
