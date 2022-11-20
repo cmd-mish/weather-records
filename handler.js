@@ -15,7 +15,7 @@ mongoose.connect(DB_URI)
   })
 
 const retreiveWeatherData = async () => {
-  const { data } = await axios(`https://api.openweathermap.org/data/2.5/weather?q=helsinki&appid=${WEATHER_API_KEY}`)
+  const { data } = await axios(`https://api.openweathermap.org/data/2.5/weather?q=helsinki&units=metric&appid=${WEATHER_API_KEY}`)
   return {
     temperature: data.main.temp,
     humidity: data.main.humidity
