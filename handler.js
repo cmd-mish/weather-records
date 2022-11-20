@@ -42,7 +42,7 @@ module.exports.processWeatherRecord = async (event) => {
 
 module.exports.getWeatherRecords = async () => {
   try {
-    const records = await WeatherRecord.find({})
+    const records = await WeatherRecord.find({}).limit(100)
     return records
   } catch (exception) {
     throw new Error(JSON.stringify(exception))
