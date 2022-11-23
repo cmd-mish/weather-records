@@ -1,5 +1,27 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js'
+import { Line } from "react-chartjs-2"
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+)
+
 const API_URI = './api'
 
 const App = () => {
@@ -9,11 +31,58 @@ const App = () => {
     axios
       .get(API_URI)
       .then(response => {
-        setRecords(response.data)
+        setRecords(response.data.reverse())
       })
   }, [])
 
   if (records.length === 0) return <>loading...</>
+
+  const data = {
+    labels: records.map(record => record.timestamp.replace('T', ' ')),
+    datasets: [
+      {
+        label: 'Temperature',
+        data: records.map(record => record.temperature),
+        fill: false,
+        borderColor: 'rgb(9, 181, 228)',
+        backgroundColor: 'rgb(9, 181, 228)',
+        yAxisID: 'y'
+      },
+      {
+        label: 'Humidity',
+        data: records.map(record => record.humidity),
+        fill: true,
+        borderColor: 'rgb(231, 231, 231)',
+        backgroundColor: 'rgb(231, 231, 231)',
+        yAxisID: 'y1'
+      },
+    ]
+  }
+
+  const options = {
+    responsive: true,
+    interaction: {
+      mode: 'index',
+      intersect: false,
+    },
+    stacked: false,
+    scales: {
+      y: {
+        type: 'linear',
+        display: true,
+        position: 'left',
+      },
+      y1: {
+        type: 'linear',
+        display: true,
+        position: 'right',
+        grid: {
+          drawOnChartArea: false,
+        },
+      },
+    },
+  }
+  console.log(data)
   return (
     <>
       <h1>
@@ -23,38 +92,7 @@ const App = () => {
         From {records[records.length - 1].timestamp.replace('T', ' ')} to {records[0].timestamp.replace('T', ' ')}
       </>
       <>
-        <table style={tableStyle}>
-          <thead>
-            <tr style={tableStyle}>
-              <td>
-                Timestamp
-              </td>
-              <td>
-                Humidity
-              </td>
-              <td>
-                Temperature
-              </td>
-            </tr>
-          </thead>
-          <tbody>
-            {records.map(record => {
-              return (
-                <tr style={tableStyle} key={record.timestamp}>
-                  <td style={tableStyle}>
-                    {record.timestamp.replace('T', ' ')}
-                  </td>
-                  <td style={tableStyle}>
-                    {record.humidity}
-                  </td>
-                  <td style={tableStyle}>
-                    {record.temperature}
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
+        <Line options={options} data={data} />
       </>
     </>
   )
