@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-const API_URI = 'https://w12vjxqf56.execute-api.eu-north-1.amazonaws.com/dev'
+const API_URI = './api'
 
 const App = () => {
   const [records, setRecords] = useState([])
