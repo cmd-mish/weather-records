@@ -22,6 +22,6 @@ functions:
     handler: handler.getWeatherRecords
     events:
       - http:
-          path: /
+          path: /api
           method: get
           cors: true
