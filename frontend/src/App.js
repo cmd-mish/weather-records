@@ -34,7 +34,8 @@ const App = () => {
   const [currentRecords, setCurrentRecords] = useState([])
 
   const convertTimestamp = (timestamp) => {
-    const dateObject = new Date(timestamp.replace('T', ' ').concat(' UTC'))
+    const isoString = timestamp.concat('.000Z')
+    const dateObject = new Date(isoString)
     return dateObject.toLocaleString('fi-FI', { timeZone: 'Europe/Helsinki' })
   }
 
